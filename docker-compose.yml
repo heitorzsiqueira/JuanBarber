@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # Serviço do Back-end
+  api:
+    build: ./Barber_Api 
+    container_name: barber_api
+    ports:
+      - "3333:3333"
+    env_file:
+      - ./Barber_Api/.env
+    volumes:
+      - ./Barber_Api:/app
+      - /app/node_modules
+    restart: always
+
+  # Serviço do Front-end
+  web:
+    build: ./Barber_Front # Se sua pasta do front tiver outro nome, mude aqui
+    container_name: barber_web
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./Barber_Front/.env
+    volumes:
+      - ./Barber_Front:/app
+      - /app/node_modules
+    depends_on:
+      - api
+    restart: always
