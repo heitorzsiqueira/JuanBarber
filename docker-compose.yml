@@ -16,7 +16,7 @@ services:
 
   # Serviço do Front-end
   web:
-    build: ./Barber_Front # Se sua pasta do front tiver outro nome, mude aqui
+    build: ./Barber_Front
     container_name: barber_web
     ports:
       - "5173:5173"

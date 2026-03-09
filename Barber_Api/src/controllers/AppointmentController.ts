@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import CreateAppointmentService from '../services/CreateAppointmentService.js';
 import { ListAppointmentsService } from '../services/ListAppointmentsService.js';
-
+import { DeleteAppointmentClientService } from '../services/DeleteAppointmentService.js';
 
 
 export class AppointmentController {
@@ -47,4 +47,17 @@ export class AppointmentController {
     }
   }
 
+  async deleteAppointment(request: Request, response: Response) { 
+    const deleteAppointmentClientService = new DeleteAppointmentClientService();
+    const appointment_id = (request as any).params.id;
+    console.log(appointment_id);
+
+    try {
+      await deleteAppointmentClientService.execute(appointment_id);
+      return response.json({ message: "Agendamento deletado com sucesso." });
+    }
+    catch (error) {
+      return response.status(400).json({ error: "Erro ao deletar agendamento." });
+    }
+}
 }

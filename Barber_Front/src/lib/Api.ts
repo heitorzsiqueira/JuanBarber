@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { supabase } from './Supabase';
 
 export const api = axios.create({
   baseURL: 'http://localhost:3333',
@@ -16,3 +17,22 @@ api.interceptors.request.use((config) => {
 }, (error) => {
   return Promise.reject(error);
 });
+
+
+api.interceptors.response.use(
+  (response) => response, 
+  async (error) => {
+    // Se o erro for 401 (Token vencido)
+    if (error.response?.status === 401) {
+      // Pedimos para o Supabase atualizar a sessão
+      const { data } = await supabase.auth.getSession();
+      
+      if (data.session) {
+        // Tenta repetir a requisição com o novo token
+        error.config.headers['Authorization'] = `Bearer ${data.session.access_token}`;
+        return api.request(error.config);
+      }
+    }
+    return Promise.reject(error);
+  }
+);

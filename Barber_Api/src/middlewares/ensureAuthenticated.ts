@@ -36,10 +36,11 @@ export async function ensureAuthenticated(
   try {
     const { data, error } = await Supabase.auth.getUser(token);
     
+    
 
     if (error || !data.user) {
 
-      return res.status(401).json({ message: 'Token é inválido' });
+      return res.status(401).json({ message: 'Token é inválido' + token});
     }
     
 
