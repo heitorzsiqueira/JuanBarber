@@ -2,7 +2,7 @@ import axios from 'axios';
 import { supabase } from './Supabase';
 
 export const api = axios.create({
-  baseURL: 'http://localhost:3333',
+  baseURL: 'https://juanbarber.onrender.com',
 });
 
 
