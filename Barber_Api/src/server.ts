@@ -28,6 +28,6 @@ app.use('/finance', FinancesRoutes);
 
 
 
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${port}`);
 });
