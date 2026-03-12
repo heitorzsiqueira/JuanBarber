@@ -26,6 +26,13 @@ app.use('/list', listRoutes);
 app.use('/services', servicesRouter);
 app.use('/finance', FinancesRoutes);
 
+app.get('/hello', (req, res) => {
+  return res.json({ 
+    message: "Opa! O back-end no Render está vivo e ouvindo!",
+    timestamp: new Date().toISOString()
+  });
+});
+
 
 
 app.listen(PORT, '0.0.0.0', () => {
