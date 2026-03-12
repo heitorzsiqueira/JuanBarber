@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { GetOrCreateUserService } from '../services/GetOrCreateUserService.js';
 import { GetUserRole } from '../services/GetUserRole.js';
 
+
 export class SessionsController {
   async create(request: Request, response: Response) {
     try {
@@ -38,4 +39,7 @@ export class SessionsController {
     }
 
   }
+
+  
+
 }

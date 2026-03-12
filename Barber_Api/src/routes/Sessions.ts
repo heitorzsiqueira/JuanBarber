@@ -9,4 +9,5 @@ const sessionsController = new SessionsController();
 sessionRoutes.post('/', ensureAuthenticated, sessionsController.create);
 sessionRoutes.get('/me', ensureAuthenticated, sessionsController.getSession);
 
+
 export { sessionRoutes };

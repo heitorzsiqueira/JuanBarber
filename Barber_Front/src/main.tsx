@@ -9,6 +9,7 @@ import { BarberDashboard } from './Pages/Barber_Dashboard/Barber.tsx';
 import { Services } from './Pages/Services/Services.tsx';
 import { MyAppointments } from './Pages/Client_Dashboard/Appointment.tsx';
 import { AdminServices } from './Pages/AdminServices/AdminServices.tsx'
+import DashboardFinanceiro from './Pages/Barber_Financial/Financial.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -30,6 +31,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/my-appointments" element={<MyAppointments />} />
         {/* Rota de administração de serviços */}
         <Route path="/admin-services" element={<AdminServices />} />
+        {/* Rota do dashboard financeiro */}
+        <Route path="/financial-dashboard" element={<DashboardFinanceiro />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

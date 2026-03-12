@@ -8,6 +8,7 @@ export class GetUserRole {
             select: {
                 name: true,
                 role: true,
+                
             }
         })
         return user;

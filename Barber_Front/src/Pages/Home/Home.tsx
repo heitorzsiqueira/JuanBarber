@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/Supabase';
 import { api } from '../../lib/Api';
-import { LogOut, Calendar, User, Scissors } from 'lucide-react';
+import { LogOut, Calendar, User, Scissors, DollarSign } from 'lucide-react'; // Adicionei o DollarSign
 import { useNavigate } from 'react-router-dom';
 
 // Seguindo a mesma interface que você usa no Dashboard
@@ -113,7 +113,6 @@ export default function Home() {
               <Calendar className="text-amber-500" />
             </div>
 
-
             <h3 className="text-xl font-bold mb-2">
               {user?.role === 'CLIENT' ? 'Meus Agendamentos' : 'Painel do Barbeiro'}
             </h3>
@@ -128,10 +127,8 @@ export default function Home() {
           <div
             onClick={() => {
               if (user?.role === 'JUAN') {
-                // Tela de gestão (ex: cadastrar novos serviços ou mudar preços)
                 navigate('/admin-services');
               } else {
-                // Tela de visualização para clientes e outros
                 navigate('/services');
               }
             }}
@@ -152,13 +149,20 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 hover:border-amber-500/50 transition-all group cursor-pointer">
-            <div className="w-12 h-12 bg-amber-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-amber-500/20 transition-colors">
-              <User className="text-amber-500" />
+          {/* NOVO BOTÃO: DASHBOARD FINANCEIRO (Só para Barbeiro ou Juan) */}
+          {(user?.role === 'BARBER' || user?.role === 'JUAN') && (
+            <div
+              onClick={() => navigate('/financial-dashboard')}
+              className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 hover:border-amber-500/50 transition-all group cursor-pointer"
+            >
+              <div className="w-12 h-12 bg-amber-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-amber-500/20 transition-colors">
+                <DollarSign className="text-amber-500" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Faturamento</h3>
+              <p className="text-zinc-500">Acompanhe seus ganhos e estatísticas de atendimentos.</p>
             </div>
-            <h3 className="text-xl font-bold mb-2">Meu Perfil</h3>
-            <p className="text-zinc-500">Gerencie seus dados e preferências de contato.</p>
-          </div>
+          )}
+
         </div>
       </main>
 

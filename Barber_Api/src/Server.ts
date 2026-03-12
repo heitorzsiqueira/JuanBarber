@@ -5,6 +5,7 @@ import { sessionRoutes } from './routes/Sessions.js';
 import { AppointmentsRoutes } from './routes/Appointments.js';
 import { listRoutes } from './routes/List.js';
 import { servicesRouter } from './routes/Services.js';
+import FinancesRoutes from './routes/Finances.js';
 
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/sessions', sessionRoutes);
 app.use('/appointments', AppointmentsRoutes);
 app.use('/list', listRoutes);
 app.use('/services', servicesRouter);
+app.use('/finance', FinancesRoutes);
 
 
 

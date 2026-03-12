@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../lib/Api'; 
+import { api } from '../../lib/Api';
 
 interface Barber {
   id: string;
   name: string;
 }
 
-interface BarberService { 
+interface BarberService {
   id: string;
   name: string;
   price: number;
@@ -17,11 +17,12 @@ export default function Agendamento() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [loadingTimes, setLoadingTimes] = useState(false);
-  
+
   const [barberId, setBarberId] = useState('');
   const [serviceId, setServiceId] = useState('');
-  
-  // Agora dividimos: data é YYYY-MM-DD e time é HH:mm
+
+  const today = new Date().toISOString().split('T')[0];
+
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
 
@@ -34,10 +35,10 @@ export default function Agendamento() {
     async function loadData() {
       try {
         const [barbersRes, servicesRes] = await Promise.all([
-          api.get('/list/barbers'), 
+          api.get('/list/barbers'),
           api.get('/list/services')
         ]);
-        
+
         setBarbers(barbersRes.data);
         setServices(servicesRes.data);
       } catch (err) {
@@ -73,36 +74,26 @@ export default function Agendamento() {
 
   async function handleCreateAppointment(e: React.FormEvent) {
     e.preventDefault();
-    
+
     if (!selectedTime) {
       alert("Selecione um horário disponível!");
-      return;
-    }
-
-    const tokenCheck = localStorage.getItem('@Barbearia:token');
-
-    if (!tokenCheck) {
-      alert("❌ Erro: Você não está autenticado! Por favor, faça login novamente.");
-      navigate('/');
       return;
     }
 
     setLoading(true);
 
     try {
-      // Combina a data e o horário para o formato ISO que o back espera
       const fullDate = new Date(`${selectedDate}T${selectedTime}:00`);
 
       await api.post('/appointments/create', {
         barber_id: barberId,
         service_id: serviceId,
-        date: fullDate.toISOString(), 
+        date: fullDate.toISOString(),
       });
 
       alert('✅ Agendamento realizado com sucesso!');
       navigate('/home');
     } catch (error: any) {
-      console.error("Erro no post:", error.response?.data);
       const message = error.response?.data?.message || 'Erro ao agendar.';
       alert('❌ ' + message);
     } finally {
@@ -112,8 +103,8 @@ export default function Agendamento() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center p-6">
-      
-      <button 
+
+      <button
         onClick={() => navigate(-1)}
         className="mb-8 self-start flex items-center gap-2 text-zinc-400 hover:text-orange-500 transition-colors"
       >
@@ -127,16 +118,16 @@ export default function Agendamento() {
         </header>
 
         <form onSubmit={handleCreateAppointment} className="space-y-6">
-          
+
           {/* Seleção de Barbeiro */}
           <div>
             <label className="block text-sm font-medium mb-2 text-zinc-400">Barbeiro</label>
-            <select 
+            <select
               required
               value={barberId}
               onChange={e => {
                 setBarberId(e.target.value);
-                setSelectedTime(''); // Limpa o horário ao trocar de barbeiro
+                setSelectedTime('');
               }}
               className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-600 outline-none transition-all appearance-none cursor-pointer"
             >
@@ -150,7 +141,7 @@ export default function Agendamento() {
           {/* Seleção de Serviço */}
           <div>
             <label className="block text-sm font-medium mb-2 text-zinc-400">Serviço</label>
-            <select 
+            <select
               required
               value={serviceId}
               onChange={e => setServiceId(e.target.value)}
@@ -165,28 +156,38 @@ export default function Agendamento() {
             </select>
           </div>
 
-          {/* Seleção de Data (Apenas o dia) */}
+          {/* Seleção de Data */}
           <div>
             <label className="block text-sm font-medium mb-2 text-zinc-400">Dia do Agendamento</label>
-            <input 
+            <input
               type="date"
+              min={today}
               required
               value={selectedDate}
               onChange={e => {
-                setSelectedDate(e.target.value);
-                setSelectedTime(''); // Limpa o horário ao trocar de dia
+                const dateValue = e.target.value;
+                const dateSelected = new Date(dateValue + 'T00:00:00');
+
+                if (dateSelected.getDay() === 0 || dateSelected.getDay() === 1) {
+                  alert("Ops! A barbearia não abre aos domingos e segundas-feiras. 😴");
+                  setSelectedDate('');
+                  return;
+                }
+
+                setSelectedDate(dateValue);
+                setSelectedTime('');
               }}
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-600 outline-none transition-all invert-[0.9] hue-rotate-[180deg]"
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-600 outline-none transition-all text-white"
             />
           </div>
 
-          {/* Seleção de Horário (Grids de botões ou Select) */}
+          {/* Seleção de Horário */}
           {selectedDate && (
             <div>
               <label className="block text-sm font-medium mb-2 text-zinc-400">
                 {loadingTimes ? 'Buscando horários...' : 'Horários Disponíveis'}
               </label>
-              
+
               <div className="grid grid-cols-3 gap-2">
                 {availableTimes.length > 0 ? (
                   availableTimes.map(time => (
@@ -194,11 +195,10 @@ export default function Agendamento() {
                       key={time}
                       type="button"
                       onClick={() => setSelectedTime(time)}
-                      className={`py-2 rounded-lg text-sm font-bold transition-all border ${
-                        selectedTime === time 
-                        ? 'bg-orange-600 border-orange-600 text-white' 
+                      className={`py-2 rounded-lg text-sm font-bold transition-all border ${selectedTime === time
+                        ? 'bg-orange-600 border-orange-600 text-white'
                         : 'bg-zinc-800 border-zinc-700 text-zinc-300 hover:border-orange-500'
-                      }`}
+                        }`}
                     >
                       {time}
                     </button>

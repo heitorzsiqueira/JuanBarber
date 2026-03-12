@@ -3,6 +3,7 @@ import{AppointmentController} from '../controllers/AppointmentController.js';
 import { ensureAuthenticated } from '../middlewares/ensureAuthenticated.js';
 
 
+
 const appointmentController = new AppointmentController();
 
 
@@ -13,6 +14,7 @@ AppointmentsRoutes.post('/create', ensureAuthenticated, appointmentController.cr
 AppointmentsRoutes.get('/schedule', ensureAuthenticated, appointmentController.listbarberappointments);
 AppointmentsRoutes.get('/client', ensureAuthenticated, appointmentController.listclientappointmens);
 AppointmentsRoutes.delete('/:id', ensureAuthenticated, appointmentController.deleteAppointment);
+AppointmentsRoutes.put('/put/:id', ensureAuthenticated, appointmentController.updateAppointment);
 
 
 export { AppointmentsRoutes };
