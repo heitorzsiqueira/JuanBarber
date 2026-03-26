@@ -11,7 +11,7 @@ import FinancesRoutes from './routes/Finances.js';
 const app = express();
 app.use(cors());
 app.use(express.json());
-const port = process.env.PORT;
+const port = Number(process.env.PORT) || 3333;
 
 
 app.use((req, res, next) => {
