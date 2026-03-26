@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import CreateServiceService from '../services/CreateServicesService.js';
 import { DeleteServicesService } from '../services/DeleteServicesService.js';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 export class ServicesController {
   async create(request: Request, response: Response) {
