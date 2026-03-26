@@ -33,7 +33,7 @@ export class ServicesController {
           error: "Este serviço já possui agendamentos registrados e não pode ser excluído para manter o histórico da barbearia."
         });
 
-        return response.status(400).json({ error: "Erro ao deletar serviço cuzinho." + (error as Error).message });
+        return response.status(400).json({ error: "Erro ao deletar serviço." + (error as Error).message });
       }
     }
   }
