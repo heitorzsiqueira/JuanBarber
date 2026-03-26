@@ -69,7 +69,7 @@ export function AdminServices() {
     } catch (error) {
       if (axios.isAxiosError(error)) {
      
-        const mensagem = error.response?.data?.error || "Erro ao excluir o serviço.";
+        const mensagem = error.response?.data?.error;
         alert(mensagem);
       } else {
         // Erro genérico (ex: erro de rede ou erro de lógica JS)
