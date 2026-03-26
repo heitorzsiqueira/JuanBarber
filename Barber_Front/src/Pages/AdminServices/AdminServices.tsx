@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Scissors, Trash2, Plus, DollarSign, Clock, FileText } from 'lucide-react';
-import {api} from '../../lib/Api';
+import { api } from '../../lib/Api';
+import axios from 'axios';
 
 interface Service {
   id: string;
@@ -44,13 +45,13 @@ export function AdminServices() {
       };
 
       await api.post('/services/create', data);
-      
+
       // Limpa os campos
       setName('');
       setDescription('');
       setPrice('');
       setDuration('');
-      
+
       loadServices(); // Atualiza a lista
       alert("Serviço cadastrado!");
     } catch (err) {
@@ -65,10 +66,16 @@ export function AdminServices() {
     try {
       await api.delete(`/services/${id}`);
       setServices(prev => prev.filter(s => s.id !== id));
-    } catch (err) {
-      const error = err as any; 
-      console.error("Erro da API:", error.response?.data);
-      alert(error.response?.data?.message || "Erro ao deletar serviço.");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+     
+        const mensagem = error.response?.data?.error || "Erro ao excluir o serviço.";
+        alert(mensagem);
+      } else {
+        // Erro genérico (ex: erro de rede ou erro de lógica JS)
+        alert("Ocorreu um erro inesperado.");
+        console.error(error);
+      }
     }
   }
 
@@ -90,11 +97,11 @@ export function AdminServices() {
           <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
             <Plus className="text-amber-500" size={20} /> Novo Serviço
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm text-zinc-400">Nome do Serviço</label>
-              <input 
+              <input
                 value={name} onChange={e => setName(e.target.value)} required
                 placeholder="Ex: Corte Degradê"
                 className="w-full bg-black border border-zinc-800 rounded-lg p-3 focus:border-amber-500 outline-none"
@@ -105,7 +112,7 @@ export function AdminServices() {
               <label className="text-sm text-zinc-400">Preço (R$)</label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-3.5 text-zinc-500" size={18} />
-                <input 
+                <input
                   type="number" step="0.01"
                   value={price} onChange={e => setPrice(e.target.value)} required
                   className="w-full bg-black border border-zinc-800 rounded-lg p-3 pl-10 focus:border-amber-500 outline-none"
@@ -117,7 +124,7 @@ export function AdminServices() {
               <label className="text-sm text-zinc-400">Descrição</label>
               <div className="relative">
                 <FileText className="absolute left-3 top-3.5 text-zinc-500" size={18} />
-                <input 
+                <input
                   value={description} onChange={e => setDescription(e.target.value)}
                   placeholder="O que está incluso no serviço?"
                   className="w-full bg-black border border-zinc-800 rounded-lg p-3 pl-10 focus:border-amber-500 outline-none"
@@ -129,7 +136,7 @@ export function AdminServices() {
               <label className="text-sm text-zinc-400">Duração (minutos)</label>
               <div className="relative">
                 <Clock className="absolute left-3 top-3.5 text-zinc-500" size={18} />
-                <input 
+                <input
                   type="number"
                   value={duration} onChange={e => setDuration(e.target.value)} required
                   className="w-full bg-black border border-zinc-800 rounded-lg p-3 pl-10 focus:border-amber-500 outline-none"
@@ -161,8 +168,8 @@ export function AdminServices() {
                   </div>
                 </div>
               </div>
-              
-              <button 
+
+              <button
                 onClick={() => handleDeleteService(service.id)}
                 className="p-3 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
               >
@@ -170,7 +177,7 @@ export function AdminServices() {
               </button>
             </div>
           ))}
-          
+
           {services.length === 0 && (
             <p className="text-center text-zinc-600 py-10">Nenhum serviço cadastrado.</p>
           )}
